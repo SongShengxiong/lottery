@@ -6,7 +6,6 @@ import org.rex.lottery.bean.SSQInfoDetail;
 import org.rex.lottery.exception.LotteryException;
 import org.rex.lottery.service.DocumentParseService;
 import org.rex.lottery.task.DataTaskExecutor;
-import org.rex.lottery.task.SSQInfoDetailDataTask;
 import org.rex.lottery.util.Lottery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,16 +29,11 @@ public class DocumentParseServiceImpl implements DocumentParseService {
 
     @Override
     public boolean parseAndSave(String url, Lottery lottery) {
-        Document document = null;
-        try {
-            document = Jsoup.connect(url).get();
-        } catch (IOException e) {
-            throw new LotteryException(e.getMessage(), lottery.name());
-        }
+        Document document = _getDocument(url);
 
         switch (lottery) {
             case SSQ_INFO_DETAIL:
-                List<SSQInfoDetail> details = DataTaskExecutor.parse(document, new SSQInfoDetailDataTask());
+                List<SSQInfoDetail> details = DataTaskExecutor.parseLotteryDocument(document, lottery);
                 cassandraTemplate.insert(details);
                 break;
             default:
@@ -47,6 +41,16 @@ public class DocumentParseServiceImpl implements DocumentParseService {
         }
 
         return false;
+    }
+
+    private Document _getDocument(String url) {
+        Document document = null;
+        try {
+            document = Jsoup.connect(url).get();
+        } catch (IOException e) {
+            throw new LotteryException(e.getMessage(), url);
+        }
+        return document;
     }
 
 }

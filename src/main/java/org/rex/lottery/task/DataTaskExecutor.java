@@ -1,5 +1,8 @@
 package org.rex.lottery.task;
 
+import org.jsoup.nodes.Document;
+import org.rex.lottery.util.Lottery;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -11,5 +14,9 @@ public class DataTaskExecutor {
         checkNotNull(task);
         T result = task.extract(data);
         return result;
+    }
+
+    public static <T> T parseLotteryDocument(Document document, Lottery lottery) {
+        return parse(document, lottery.taskExecutor());
     }
 }

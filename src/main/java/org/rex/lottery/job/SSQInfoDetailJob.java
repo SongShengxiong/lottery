@@ -5,8 +5,6 @@ import org.rex.lottery.util.Lottery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-
 /**
  * Created by RexSong on 2017/8/8.
  */
@@ -15,8 +13,8 @@ public class SSQInfoDetailJob {
     @Autowired
     private DocumentParseService documentParseService;
 
-    @PostConstruct
+//    @PostConstruct
     public void init() {
-        documentParseService.parseAndSave("http://datachart.500.com/ssq/history/newinc/history.php?start=03001&end=17092", Lottery.SSQ_INFO_DETAIL);
+        documentParseService.parseAndSave("http://datachart.500.com/ssq/history/newinc/history.php?start=17903&end=17093", Lottery.SSQ_INFO_DETAIL);
     }
 }
