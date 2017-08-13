@@ -8,5 +8,5 @@ public interface Constants {
     /**
      * 双色球详情数据最新的url
      */
-    String SSQ_DETAIL_LATEST_URL = SSQ_DETAIL_BASE_URL;
+    String SSQ_DETAIL_LATEST_URL = SSQ_DETAIL_BASE_URL + "?start={0}&end={1}";
 }

@@ -13,8 +13,8 @@ public class SSQInfoDetailJob {
     @Autowired
     private DocumentParseService documentParseService;
 
-//    @PostConstruct
+    //    @PostConstruct
     public void init() {
-        documentParseService.parseAndSave("http://datachart.500.com/ssq/history/newinc/history.php?start=17903&end=17093", Lottery.SSQ_INFO_DETAIL);
+        documentParseService.parseAndSave("http://datachart.500.com/ssq/history/newinc/history.php?start=17093&end=17093", Lottery.SSQ_INFO_DETAIL);
     }
 }
