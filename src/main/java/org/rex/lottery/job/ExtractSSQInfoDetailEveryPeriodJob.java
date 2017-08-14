@@ -65,7 +65,7 @@ public class ExtractSSQInfoDetailEveryPeriodJob implements Job {
         // 17092变成17093 / 18001
         int weekOfLastOpenDay = latestOpenDay.dayOfWeek().get();
         // 周4开奖要隔3天 才到周日 其余周2 7开奖都是过两天就下一期了
-        int interval = weekOfLastOpenDay == 0 ? 3 : 2;
+        int interval = weekOfLastOpenDay == 7 ? 3 : 2;
         String yyyyMMddOfLastOpen = latestOpenDay.minusDays(interval).toString("yyyy-MM-dd");
         SSQInfoDetail detailOfLastOpen = cassandraTemplate.selectOne("SELECT * FROM ssq_info_detail WHERE date ='" + yyyyMMddOfLastOpen + "';", SSQInfoDetail.class);
         if (detailOfLastOpen == null) {
