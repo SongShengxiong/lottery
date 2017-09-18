@@ -3,6 +3,8 @@ package org.rex.lottery.dao;
 import org.rex.lottery.bean.SSQInfoDetail;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by RexSong on 2017/9/18.
  */
@@ -20,6 +22,11 @@ public class LotterySSQInfoDetailDAO implements ILotterySSQInfoDetailDAO {
 
     @Override
     public boolean addOne(SSQInfoDetail ssqInfoDetail) {
+        return false;
+    }
+
+    @Override
+    public boolean addList(List<SSQInfoDetail> ssqInfoDetailList) {
         return false;
     }
 }
