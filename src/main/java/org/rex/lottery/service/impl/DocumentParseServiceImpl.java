@@ -3,6 +3,7 @@ package org.rex.lottery.service.impl;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.rex.lottery.bean.SSQInfoDetail;
+import org.rex.lottery.dao.ILotterySSQInfoDetailDAO;
 import org.rex.lottery.exception.LotteryException;
 import org.rex.lottery.service.DocumentParseService;
 import org.rex.lottery.task.DataTaskExecutor;
@@ -25,7 +26,7 @@ public class DocumentParseServiceImpl implements DocumentParseService {
 
 
     @Autowired
-    private CassandraTemplate cassandraTemplate;
+    private ILotterySSQInfoDetailDAO lotterySSQInfoDetailDAO;
 
     @Override
     public boolean parseAndSave(String url, Lottery lottery) {
@@ -34,7 +35,7 @@ public class DocumentParseServiceImpl implements DocumentParseService {
         switch (lottery) {
             case SSQ_INFO_DETAIL:
                 List<SSQInfoDetail> details = DataTaskExecutor.parseLotteryDocument(document, lottery);
-                cassandraTemplate.insert(details);
+                lotterySSQInfoDetailDAO.addList(details);
                 break;
             default:
                 break;
