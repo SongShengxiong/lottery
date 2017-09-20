@@ -1,5 +1,6 @@
 package org.rex.lottery.bean;
 
+import org.apache.directory.api.util.Strings;
 import org.springframework.data.cassandra.mapping.Column;
 import org.springframework.data.cassandra.mapping.PrimaryKey;
 import org.springframework.data.cassandra.mapping.Table;
@@ -271,5 +272,53 @@ public class SSQInfoDetail {
                 ", currentPeriodSold=" + currentPeriodSold +
                 ", date='" + date + '\'' +
                 '}';
+    }
+
+    public static SSQInfoDetail deserialize(String text) {
+        if (Strings.isEmpty(text)) {
+            throw new RuntimeException("text is empty");
+        }
+
+        String[] data = text.split(",");
+        SSQInfoDetail infoDetail = new SSQInfoDetail();
+        try {
+            infoDetail.period(data[0])
+                    .firstRed(Integer.parseInt(data[1]))
+                    .secondRed(Integer.parseInt(data[2]))
+                    .thirdRed(Integer.parseInt(data[3]))
+                    .forthRed(Integer.parseInt(data[4]))
+                    .fifthRed(Integer.parseInt(data[5]))
+                    .sixthRed(Integer.parseInt(data[6]))
+                    .blue(Integer.parseInt(data[7]))
+                    .totalRemainAward(Long.parseLong(data[8].replaceAll(",","")))
+                    .firstLevelCount(Integer.parseInt(data[9]))
+                    .firstLevelAward(Long.parseLong(data[10].replaceAll(",","")))
+                    .secondLevelCount(Integer.parseInt(data[11]))
+                    .secondLevelAward(Long.parseLong(data[12].replaceAll(",","")))
+                    .currentPeriodSold(Long.parseLong(data[13].replaceAll(",","")))
+                    .date(data[14]);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return infoDetail;
+    }
+
+    public String serialize() {
+        return period +
+                "," + firstRed +
+                "," + secondRed +
+                "," + thirdRed +
+                "," + forthRed +
+                "," + fifthRed +
+                "," + sixthRed +
+                "," + blue +
+                "," + totalRemainAward +
+                "," + firstLevelCount +
+                "," + firstLevelAward +
+                "," + secondLevelCount +
+                "," + secondLevelAward +
+                "," + currentPeriodSold +
+                "," + date;
     }
 }
