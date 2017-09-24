@@ -5,6 +5,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.rex.lottery.bean.SSQInfoDetail;
+import org.rex.lottery.dao.ILotterySSQInfoDetailDAO;
 import org.rex.lottery.service.DocumentParseService;
 import org.rex.lottery.service.MailService;
 import org.rex.lottery.util.Constants;
@@ -27,9 +28,6 @@ public class ExtractSSQInfoDetailEveryPeriodJob implements Job {
     private static final Logger logger = LoggerFactory.getLogger(ExtractSSQInfoDetailEveryPeriodJob.class);
 
     @Autowired
-    private CassandraTemplate cassandraTemplate;
-
-    @Autowired
     private DocumentParseService documentParseService;
 
     @Autowired
@@ -37,6 +35,9 @@ public class ExtractSSQInfoDetailEveryPeriodJob implements Job {
 
     @Value("${mail.toSSX.addr}")
     private String songshengxiongMailAddr;
+
+    @Autowired
+    private ILotterySSQInfoDetailDAO lotterySSQInfoDetailDAO;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -58,7 +59,7 @@ public class ExtractSSQInfoDetailEveryPeriodJob implements Job {
     private SSQInfoDetail _getLatestSSQInfoDetail(DateTime latestOpenDay) {
         String yyyyMMddOfLatest = latestOpenDay.toString("yyyy-MM-dd");
         logger.info("Extract ssqInfoDetail - {}", latestOpenDay);
-        return cassandraTemplate.selectOne("SELECT * FROM ssq_info_detail WHERE date ='" + yyyyMMddOfLatest + "';", SSQInfoDetail.class);
+        return lotterySSQInfoDetailDAO.getOne(yyyyMMddOfLatest);
     }
 
     private String _getCurrentURL(DateTime latestOpenDay) {
@@ -67,14 +68,14 @@ public class ExtractSSQInfoDetailEveryPeriodJob implements Job {
         // 周4开奖要隔3天 才到周日 其余周2 7开奖都是过两天就下一期了
         int interval = weekOfLastOpenDay == 7 ? 3 : 2;
         String yyyyMMddOfLastOpen = latestOpenDay.minusDays(interval).toString("yyyy-MM-dd");
-        SSQInfoDetail detailOfLastOpen = cassandraTemplate.selectOne("SELECT * FROM ssq_info_detail WHERE date ='" + yyyyMMddOfLastOpen + "';", SSQInfoDetail.class);
-        if (detailOfLastOpen == null) {
+        if (lotterySSQInfoDetailDAO.exists(yyyyMMddOfLastOpen)) {
             String msg = "can not find last open lottery - " + yyyyMMddOfLastOpen;
             logger.error(msg);
             _sendMail("Lottery ERROR", msg);
             throw new RuntimeException(msg);
         }
 
+        SSQInfoDetail detailOfLastOpen = lotterySSQInfoDetailDAO.getOne(yyyyMMddOfLastOpen);
 
         // 上一期开奖编号
         String lastOpenPeriod = detailOfLastOpen.getPeriod();
